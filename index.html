@@ -115,6 +115,13 @@ footer{background:#0a0e0b;color:#fff;padding:58px 0 24px}.footer-grid{display:gr
 @media(max-width:560px){.nav .brand-logos img{height:min(var(--logo-h,46px),58px);max-width:150px}.nav-wrap .nav,.admin-nav .nav{height:min(var(--nav-h,82px),84px)}.nav-links{top:min(var(--nav-h,82px),84px)}.footer-grid .brand-logos img{height:min(calc(var(--logo-h,46px)*1.2),80px)}}
 .logo-opts{display:flex;flex-direction:column;gap:4px;font-size:.8rem}.logo-opts label{font-weight:600!important;display:flex;gap:6px;align-items:center}
 .size-picker{display:flex;gap:8px;flex-wrap:wrap}.size-picker button{border:1px solid #d7d1c4;background:#fff;border-radius:999px;padding:9px 14px;font-weight:800;cursor:pointer}.size-picker button.active{background:#121812;color:#fff;border-color:#121812}
+
+/* footer logos: always one row, shrink to fit the column */
+.footer-grid>div:first-child{min-width:0}
+.footer-grid .brand.brand-logos{flex-wrap:nowrap;gap:18px;max-width:100%;margin-bottom:6px}
+.footer-grid .brand-logos img{height:auto;width:auto;max-height:min(calc(var(--logo-h,46px)*1.1),88px);max-width:100%;min-width:0;flex:0 1 auto;object-fit:contain}
+.footer-grid .brand-logos .logo-divider{flex:0 0 1px}
+@media(max-width:560px){.footer-grid .brand-logos img{max-height:64px}}
 </style>
 </head>
 <body>
@@ -446,7 +453,7 @@ function applyContactSocial(d){const box=$('contactSocial');if(!box)return;const
 const DEFAULT_NAME='Mitchell Cattle Co.';let appliedName=DEFAULT_NAME;
 function companyName(d){return (d&&d.company_name||'').trim()||DEFAULT_NAME}
 function initials(n){return n.replace(/[^A-Za-z0-9 ]/g,' ').split(/\s+/).filter(w=>w&&!/^(co|llc|inc|the|and|of)$/i.test(w)).slice(0,2).map(w=>w[0].toUpperCase()).join('')||'MC'}
-function swapText(str,from,to){if(!str||from===to)return str;return str.split(from).join(to).split(from.toUpperCase()).join(to.toUpperCase())}
+function swapText(str,from,to){if(!str||from===to)return str;const fix=(t,f,n)=>{let out='',pos=0,k;while((k=t.indexOf(f,pos))!==-1){let end=k+f.length;let hadDot=f.endsWith('.');if(!hadDot&&t[end]==='.'){hadDot=true;end++}const rest=t.slice(end);const sentenceGoesOn=/^\s+[A-Z]/.test(rest);out+=t.slice(pos,k)+n+((hadDot&&sentenceGoesOn&&!n.endsWith('.'))?'.':'');pos=end}return out+t.slice(pos)};return fix(fix(str,from,to),from.toUpperCase(),to.toUpperCase())}
 function applyCompanyName(d){const to=companyName(d),from=appliedName;if(to===from)return;
  const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentElement&&n.parentElement.closest('#adminShell form,#companySql,#sqlBox,script,style,textarea')?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});
  const nodes=[];while(w.nextNode())nodes.push(w.currentNode);
