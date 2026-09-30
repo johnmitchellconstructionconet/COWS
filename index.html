@@ -134,6 +134,16 @@ footer{background:#0a0e0b;color:#fff;padding:58px 0 24px}.footer-grid{display:gr
 
 /* current page in nav */
 .nav-links a[data-nav].current{opacity:1;text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:1px}
+
+/* sticky nav: always visible, solid + compact once you scroll */
+.nav-wrap{position:fixed;transition:background-color .25s ease,box-shadow .25s ease,border-color .25s ease}
+.nav-wrap.scrolled{background:rgba(13,19,14,.94)!important;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 10px 28px rgba(0,0,0,.22);border-bottom-color:rgba(255,255,255,.08)}
+.nav-wrap .nav{transition:height .25s ease}.nav-wrap .brand-logos img,.nav-wrap .brand-mark{transition:height .25s ease,width .25s ease}
+.nav-wrap.scrolled .nav{height:max(68px,calc(var(--nav-h,82px)*.76))}
+.nav-wrap.scrolled .brand-logos img{height:max(40px,calc(var(--logo-h,46px)*.74))}
+main section,#cattleViewPage section{scroll-margin-top:max(68px,calc(var(--nav-h,82px)*.76))}
+@media(max-width:900px){.nav-wrap .nav-links{top:calc(100% + 8px)}}
+@media(max-width:560px){main section,#cattleViewPage section{scroll-margin-top:64px}.nav-wrap.scrolled .nav{height:min(64px,max(60px,calc(var(--nav-h,82px)*.7)))}.nav-wrap.scrolled .brand-logos img{height:min(44px,calc(var(--logo-h,46px)*.7))}}
 </style>
 </head>
 <body>
@@ -636,6 +646,9 @@ function exportBuyers(){const rows=buyerSubscribers.map(b=>({joined:excelLocal(b
  runExport($('exportBuyersBtn'),'Buyer List',`${companyName(siteSettings)} — Buyer List`,cols,rows,`${fileBase()}_Buyer-List_${today()}`)}
 
 // start the router last so every function and setting above is ready (fixes opening a #admin bookmark directly)
+
+// sticky nav state
+(function(){const navs=[...document.querySelectorAll('.nav-wrap')];let ticking=false;const update=()=>{const on=window.scrollY>30;navs.forEach(n=>n.classList.toggle('scrolled',on));ticking=false};window.addEventListener('scroll',()=>{if(!ticking){ticking=true;requestAnimationFrame(update)}},{passive:true});window.addEventListener('hashchange',()=>setTimeout(update,50));update();})();
 route();
 </script>
 </body></html>
